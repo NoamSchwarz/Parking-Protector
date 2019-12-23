@@ -7,7 +7,7 @@ def test1():
     path1 = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\space #1 ocupied.jpeg"
     path2 = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\no cars.jpeg"
 
-    thresh = 110
+    thresh = 100
     maxVal = 255
 
     #load, resize and crop image of ocupied parking spot #1
@@ -35,16 +35,16 @@ def test1():
     #make difference image greyscale for threshold
     differencGreyscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
     #threshold image. doesn't use retreval
-  #  retreval, differenceThreshold =  cv2.threshold(differencGreyscale, thresh,maxVal, cv2.THRESH_BINARY)
+    retreval, differenceThreshold =  cv2.threshold(differencGreyscale, thresh,maxVal, cv2.THRESH_BINARY)
 
     print(differencGreyscale[120:125,170:175 ])
     plt.figure(figsize=[15, 15]);
     plt.subplot(221); plt.imshow(allUnocupiedCrop); plt.title("unocupied");
     plt.subplot(222); plt.imshow(spot1Crop); plt.title("spot 1");
-    plt.subplot(223); plt.imshow(differencGreyscale,'gray'); plt.title("difference greyscale");
+    plt.subplot(223); plt.imshow(differenceThreshold,'gray'); plt.title("difference threshold");
     plt.subplot(224); plt.imshow(difference); plt.title("difference");
 
-    plt.savefig("difference_with_grayScale")
+    plt.savefig("difference_with_threshold")
     plt.show()
 
 

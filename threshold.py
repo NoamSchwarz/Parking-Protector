@@ -4,7 +4,7 @@ windowName = "threshold image"
 trackbarValue = "threshold scale"
 scaleFactor = 0
 maxScale = 255
-imagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\difference.png"
+imagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\difference_with_grayScale.png"
 
 im = cv2.imread(imagePath)
 src = cv2.resize(im,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
