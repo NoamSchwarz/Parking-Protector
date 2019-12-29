@@ -1,6 +1,4 @@
 import cv2
-import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 
 def test1():
@@ -37,32 +35,41 @@ def test1():
     #threshold image. doesn't use retreval
     retreval, differenceThreshold =  cv2.threshold(differencGreyscale, thresh,maxVal, cv2.THRESH_BINARY)
 
+    #find and draw contours
     contours, hierarchy = cv2.findContours(differenceThreshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
     differenceThresholdCopy = differenceThreshold.copy()
     differenceThresholdBGR = cv2.cvtColor(differenceThresholdCopy, cv2.COLOR_GRAY2BGR)
-    differenceThresholdBGR = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
+    differenceWithContours = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
 
-    for cnt in contours:
-        # Vertical rectangle
-        x, y, w, h = cv2.boundingRect(cnt)
-        cv2.rectangle(differenceThresholdBGR, (x, y), (x + w, y + h), (255, 0, 255), 2)
+    #find biggest contour and boundBox it
+    biggestContour = max(contours,key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(biggestContour)
+    # draw the book contour (in green)
+    cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-    print("Number of contours found = {}".format(len(contours)))
-    plt.imshow(differenceThresholdBGR)
+    #compute % of boundBox area in parking area
+    boundBoxArea = (x + w) * (y + h)
+    parkingAreaX,parkingAreaY = spot1Crop.shape[:2]
+    parkingArea = parkingAreaX * parkingAreaY
+    percentage = 100 * (float(boundBoxArea)/float(parkingArea))
+
+    if percentage > 10:
+        print("PARKING TAKEN")
+
+
+    print(differencGreyscale[120:125,170:175 ])
+    plt.figure(figsize=[15, 15]);
+    plt.subplot(221); plt.imshow(allUnocupiedCrop); plt.title("unocupied");
+    plt.subplot(222); plt.imshow(spot1Crop); plt.title("spot 1");
+    plt.subplot(223); plt.imshow(differenceThreshold,'gray'); plt.title("difference threshold");
+    plt.subplot(224); plt.imshow(difference); plt.title("difference");
+
     plt.show()
+    #plt.savefig("difference_with_threshold")
 
-    # print(differencGreyscale[120:125,170:175 ])
-    # plt.figure(figsize=[15, 15]);
-    # plt.subplot(221); plt.imshow(allUnocupiedCrop); plt.title("unocupied");
-    # plt.subplot(222); plt.imshow(spot1Crop); plt.title("spot 1");
-    # plt.subplot(223); plt.imshow(differenceThreshold,'gray'); plt.title("difference threshold");
-    # plt.subplot(224); plt.imshow(difference); plt.title("difference");
-    #
-    # plt.savefig("difference_with_threshold")
-
-
-
+    print(boundBoxArea, parkingArea, percentage)
+    plt.imshow(differenceWithContours)
+    plt.show()
 
 
 test1()
