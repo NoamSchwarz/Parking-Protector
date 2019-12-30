@@ -9,6 +9,9 @@ def test2():
     spotTwoOccupiedPath =  r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\space #2 ocupied.jpeg"
     spotThreeOccupiedPath =  r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\space #3 ocupied.jpeg"
 
+    webcam_1 = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\29.12 homeParkingTest\homeparking1.jpg"
+    webcam_2 = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\29.12 homeParkingTest\homeparking2.jpg"
+
     thresh = 100
     maxVal = 255
 
