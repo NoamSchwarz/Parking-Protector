@@ -20,19 +20,19 @@ path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test
 imageCounter = 1
 
 while True:
-    cam = VideoCapture(0,cv2.CAP_DSHOW)   # 0 -> index of camera
+    cam = VideoCapture(1,cv2.CAP_DSHOW)   # 0 -> index of camera
     s, img = cam.read()
     if s:    # frame captured without any errors
        # namedWindow("cam-test")
-        imshow("image #%d.jpg" %imageCounter,img)
+        #imshow("image #%d.jpg" %imageCounter,img)
         waitKey(1500)
       #  destroyWindow("cam-test")
-        cv2.imwrite(os.path.join(path, "image #%d.jpg" %imageCounter), img)
+        cv2.imwrite(os.path.join(path, "image_%d.jpg" %imageCounter), img)
     cam.release()
     cv2.destroyAllWindows()
     imageCounter += 1
 
-    time.sleep(2.0 - ((time.time() - starttime) % 2.0))
+    time.sleep(30.0 - ((time.time() - starttime) % 30.0))
 
 
 
