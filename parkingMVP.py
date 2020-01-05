@@ -31,7 +31,7 @@ def parkingMVP():
     # crop base image mark it firstImageCrop
     firstImageCrop = baseImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
     firstImageCrop = firstImageCrop[...,::-1]
-    imageCounter = 2
+    imageCounter = 1
 
     while imageCounter < 5:
         # crop image_2 - mark it secondImageCrop
@@ -53,17 +53,22 @@ def parkingMVP():
         differenceWithContours = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
 
         # find biggest contour and boundBox it
-        biggestContour = max(contours, key=cv2.contourArea)
+        try:
+            biggestContour = max(contours, key=cv2.contourArea)
+        except ValueError:
+            print("no contours detected here")
+            imageCounter += 1
+            continue
+        else:
+            x, y, w, h = cv2.boundingRect(biggestContour)
+            # draw the book contour (in green)
+            cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
-        x, y, w, h = cv2.boundingRect(biggestContour)
-        # draw the book contour (in green)
-        cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            plt.imshow(differenceWithContours)
+            plt.show()
 
-        plt.imshow(differenceWithContours)
-        plt.show()
-
-        imageCounter += 1
-        # if yes, print something , stop procces?
+            imageCounter += 1
+            # if yes, print something , stop procces?
         # if no, image_2 becomes first_image, load, crop and mark image_3 to second_image and repeat
 
     
