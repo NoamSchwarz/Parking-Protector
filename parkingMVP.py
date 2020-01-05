@@ -55,13 +55,20 @@ def parkingMVP():
         # find biggest contour and boundBox it
         try:
             biggestContour = max(contours, key=cv2.contourArea)
+        #incase compared photos are exactly/mostly the same and no contours are found
         except ValueError:
-            print("no contours detected here")
+            print("no contours detected in image %d" %imageCounter)
             imageCounter += 1
             continue
         else:
+            biggestContourArea = cv2.contourArea(biggestContour)
+            image_h, image_w = secondImageCrop.shape[:2]
+            if biggestContourArea > (image_h*image_w)*0.3:
+                print("parking taken")
+            else:
+                print("small thing in parking")
+
             x, y, w, h = cv2.boundingRect(biggestContour)
-            # draw the book contour (in green)
             cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
 
             plt.imshow(differenceWithContours)
