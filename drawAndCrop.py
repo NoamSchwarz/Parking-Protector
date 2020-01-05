@@ -32,8 +32,10 @@ def cropRectangle(action, x,y,flags, userdata):
         cv2.imwrite("croped.png", cropedImage)
 
 
-sourcePath  = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\view_above_notebbok_in_order\image_1.jpeg"
+sourcePath  = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_1.jpeg"
 img= cv2.imread(sourcePath, 1)
+cv2.imshow("img",img)
+cv2.waitKey(2000)
 source = cv2.resize(img,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
 # Make a dummy image, will be useful to clear the drawing
 dummy = source.copy()

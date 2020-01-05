@@ -11,7 +11,7 @@ def test1():
     #load, resize and crop image of ocupied parking spot #1
     spot1 = cv2.imread(path1)
     spot1Copy = spot1 .copy()
-    spot1ScaleDown = cv2.resize(spot1Copy,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
+    spot1ScaleDown = cv2.resize(spot1Copy, None, fx=0.5, fy=0.5, interpolation= cv2.INTER_LINEAR)
     spot1Crop = spot1ScaleDown[120:260,390:650]
     # swich BGE to RGB in image
     spot1Crop = spot1Crop[...,::-1]

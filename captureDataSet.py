@@ -16,7 +16,7 @@ import os
 
 # re-running function using system vlock
 starttime=time.time()
-path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\sequential_images"
+path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images"
 imageCounter = 1
 
 while True:
@@ -24,7 +24,7 @@ while True:
     s, img = cam.read()
     if s:    # frame captured without any errors
        # namedWindow("cam-test")
-        #imshow("image #%d.jpg" %imageCounter,img)
+        imshow("image #%d.jpg" %imageCounter,img)
         waitKey(1500)
       #  destroyWindow("cam-test")
         cv2.imwrite(os.path.join(path, "image_%d.jpg" %imageCounter), img)
@@ -32,7 +32,7 @@ while True:
     cv2.destroyAllWindows()
     imageCounter += 1
 
-    time.sleep(30.0 - ((time.time() - starttime) % 30.0))
+    time.sleep(20.0 - ((time.time() - starttime) % 20.0))
 
 
 

@@ -55,11 +55,41 @@ def test2():
     spotTwoOccupiedSpot3 = spotTwoCopy[725:1000, 800:1315]
     spotTwoOccupiedSpot3 = spotTwoOccupiedSpot3[..., ::-1]
 
-    difference = cv2.subtract(noCarsSpot3, spotTwoOccupiedSpot3)
+    #PICTURES FROM HOME PARKING
+    emptySpotPath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\real_cars_test\no_cars.jpg"
+    spotTakenPath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\real_cars_test\yes_car.jpg"
+
+    #croping coordinates: y = 200:300 , x = 540:
+
+    #threshold levels for real-life + dark image
+    darkThreshold = 30
+
+    #crop empty spot
+    emptySpot = cv2.imread(emptySpotPath)
+    emptySpotCopy = emptySpot.copy()
+    emptySpotCrop = emptySpotCopy[200:300, 540:]
+    emptySpotFinal = emptySpotCrop[..., ::-1]
+
+    #crop taken spot
+    spotTaken = cv2.imread(spotTakenPath)
+    spotTakenCopy = spotTaken.copy()
+    spotTakenCrop = spotTakenCopy[200:300, 540:]
+    spotTakenFinal = spotTakenCrop[..., ::-1]
+
+
+    difference = cv2.subtract(emptySpotFinal,spotTakenFinal)
+
+    plt.imshow(difference)
+    plt.show()
 
     differencGreyscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-    # threshold image. doesn't use retreval
-    retreval, differenceThreshold = cv2.threshold(differencGreyscale, thresh, maxVal, cv2.THRESH_BINARY)
+    # threshold image. for notebook images
+    #retreval, differenceThreshold = cv2.threshold(differencGreyscale, thresh, maxVal, cv2.THRESH_BINARY)
+    #threshold image for real-life + dark image
+    retreval, differenceThreshold = cv2.threshold(differencGreyscale, darkThreshold, maxVal, cv2.THRESH_BINARY)
+
+    plt.imshow(differenceThreshold,'gray')
+    plt.show()
 
     # find and draw contours
     contours, hierarchy = cv2.findContours(differenceThreshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
