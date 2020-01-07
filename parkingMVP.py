@@ -18,7 +18,7 @@ def parkingMVP():
     # maxVal = 255
 
     #for notebook_sequential_images, witch are darker then the norebook from above
-    thresh = 80
+    thresh = 65
     maxVal = 255
 
     cv2.namedWindow("Window")

@@ -5,7 +5,7 @@ def test1():
     path1 = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\space #1 ocupied.jpeg"
     path2 = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\no cars.jpeg"
 
-    thresh = 100
+    thresh = 65
     maxVal = 255
 
     #load, resize and crop image of ocupied parking spot #1
