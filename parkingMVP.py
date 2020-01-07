@@ -2,14 +2,23 @@ import cv2
 import matplotlib.pyplot as plt
 import os
 
-baseImagePath  = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_1.jpeg"
+#test with 4 pictures and no light change
+#baseImagePath  = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_1.jpeg"
+
+#test with multiple pictures and light change
+baseImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
 img= cv2.imread(baseImagePath, 1)
 baseImage = cv2.resize(img,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
 # Make a dummy image, will be useful to clear the drawing
 dummy = baseImage.copy()
 
 def parkingMVP():
-    thresh = 100
+    #for notebook from abovr
+    # thresh = 100
+    # maxVal = 255
+
+    #for notebook_sequential_images, witch are darker then the norebook from above
+    thresh = 80
     maxVal = 255
 
     cv2.namedWindow("Window")
@@ -33,9 +42,14 @@ def parkingMVP():
     firstImageCrop = firstImageCrop[...,::-1]
     imageCounter = 1
 
-    while imageCounter < 5:
+    while imageCounter < 15:
+        #test with 4 pictures and no light change
+        #secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_%d.jpeg" %imageCounter
+
+        # test with multiple pictures and light change
+        secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_%d.jpg" %imageCounter
+
         # crop image_2 - mark it secondImageCrop
-        secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_%d.jpeg" %imageCounter
         secondImage = cv2.imread(secondImagePath)
         secondImageResized = cv2.resize(secondImage,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
         secondImageResized = secondImageResized[...,::-1]
@@ -64,9 +78,9 @@ def parkingMVP():
             biggestContourArea = cv2.contourArea(biggestContour)
             image_h, image_w = secondImageCrop.shape[:2]
             if biggestContourArea > (image_h*image_w)*0.3:
-                print("parking taken")
+                print("parking taken in image %d" %imageCounter)
             else:
-                print("small thing in parking")
+                print("small thing in image %d" %imageCounter)
 
             x, y, w, h = cv2.boundingRect(biggestContour)
             cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)

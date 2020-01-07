@@ -15,6 +15,7 @@ def test2():
     thresh = 100
     maxVal = 255
 
+    #TESTING 10.12.VIEW FROM ABOVE NOTEBOOK
     # cropping coodinates for spot #2: x = 390:650 , y = 240:390
 
     #crop spot#2 out of no cars image
@@ -55,7 +56,8 @@ def test2():
     spotTwoOccupiedSpot3 = spotTwoCopy[725:1000, 800:1315]
     spotTwoOccupiedSpot3 = spotTwoOccupiedSpot3[..., ::-1]
 
-    #PICTURES FROM HOME PARKING
+
+    #TESTING PICTURES FROM HOME PARKING
     emptySpotPath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\real_cars_test\no_cars.jpg"
     spotTakenPath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\real_cars_test\yes_car.jpg"
 
@@ -75,6 +77,11 @@ def test2():
     spotTakenCopy = spotTaken.copy()
     spotTakenCrop = spotTakenCopy[200:300, 540:]
     spotTakenFinal = spotTakenCrop[..., ::-1]
+
+
+    #TESTING FROM notebook_sequential _images
+    notebook_sequential_image_2_path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_2.jpg"
+    notebook_sequential_image_3_path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_3.jpg"
 
 
     difference = cv2.subtract(emptySpotFinal,spotTakenFinal)
