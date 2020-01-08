@@ -43,10 +43,9 @@ def parkingMVP():
     plt.imshow(secondImageCrop)
     plt.show()
 
-    # compare first_image to second_image , find if there is conotour
+    # compare first_image to second_image , find contours
     difference = cv2.subtract(firstImageCrop, secondImageCrop)
     differencGreyscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-    # threshold image. for notebook images
     retreval, differenceThreshold = cv2.threshold(differencGreyscale, thresh, maxVal, cv2.THRESH_BINARY)
 
     contours, hierarchy = cv2.findContours(differenceThreshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

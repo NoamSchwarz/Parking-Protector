@@ -2,9 +2,6 @@ import cv2
 import matplotlib.pyplot as plt
 import os
 
-#test with 4 pictures and no light change
-#baseImagePath  = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_1.jpeg"
-
 #test with multiple pictures and light change
 baseImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
 img= cv2.imread(baseImagePath, 1)
@@ -12,10 +9,10 @@ baseImage = cv2.resize(img,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
 # Make a dummy image, will be useful to clear the drawing
 dummy = baseImage.copy()
 
+#GET NUM OF IMAGES IN FILE AUTOMATICALY
+numOfImages = 14
+
 def parkingMVP():
-    #for notebook from abovr
-    # thresh = 100
-    # maxVal = 255
 
     #for notebook_sequential_images, witch are darker then the norebook from above
     thresh = 65
@@ -42,23 +39,24 @@ def parkingMVP():
     firstImageCrop = firstImageCrop[...,::-1]
     imageCounter = 1
 
-    while imageCounter < 15:
-        #test with 4 pictures and no light change
-        #secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\10.12 view above notebook\view_above_notebbok_in_order\image_%d.jpeg" %imageCounter
-
+    while imageCounter < numOfImages+1 :
         # test with multiple pictures and light change
         secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_%d.jpg" %imageCounter
 
-        # crop image_2 - mark it secondImageCrop
+        # crop image_2
         secondImage = cv2.imread(secondImagePath)
         secondImageResized = cv2.resize(secondImage,None,fx=0.5,fy=0.5,interpolation= cv2.INTER_LINEAR)
         secondImageResized = secondImageResized[...,::-1]
         secondImageCrop = secondImageResized[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
 
-        # compare first_image to second_image , find if there is conotour
+        plt.figure(figsize=[15, 15]);
+        plt.subplot(121); plt.imshow(firstImageCrop); plt.title("first image crop");
+        plt.subplot(122); plt.imshow(secondImageCrop); plt.title("second image crop");
+        plt.show()
+
+        # compare first_image to second_image , find contours
         difference = cv2.subtract(firstImageCrop, secondImageCrop)
         differencGreyscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-        # threshold image. for notebook images
         retreval, differenceThreshold = cv2.threshold(differencGreyscale, thresh, maxVal, cv2.THRESH_BINARY)
 
         contours, hierarchy = cv2.findContours(differenceThreshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -66,10 +64,9 @@ def parkingMVP():
         differenceThresholdBGR = cv2.cvtColor(differenceThresholdCopy, cv2.COLOR_GRAY2BGR)
         differenceWithContours = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
 
-        # find biggest contour and boundBox it
+        #incase compared photos are exactly/mostly the same and no contours are found
         try:
             biggestContour = max(contours, key=cv2.contourArea)
-        #incase compared photos are exactly/mostly the same and no contours are found
         except ValueError:
             print("no contours detected in image %d" %imageCounter)
             imageCounter += 1
@@ -77,22 +74,25 @@ def parkingMVP():
         else:
             biggestContourArea = cv2.contourArea(biggestContour)
             image_h, image_w = secondImageCrop.shape[:2]
+
             if biggestContourArea > (image_h*image_w)*0.3:
                 print("parking taken in image %d" %imageCounter)
             else:
                 print("small thing in image %d" %imageCounter)
 
+            #draw boundindgBox abour biggest contour
             x, y, w, h = cv2.boundingRect(biggestContour)
             cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
-
-            plt.imshow(differenceWithContours)
-            plt.show()
+            #
+            # plt.imshow(differenceWithContours)
+            # plt.show()
 
             imageCounter += 1
+
+            firstImageCrop = secondImageCrop
             # if yes, print something , stop procces?
         # if no, image_2 becomes first_image, load, crop and mark image_3 to second_image and repeat
 
-    
 
 topLeft = None
 bottomRight = None
