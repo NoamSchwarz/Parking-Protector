@@ -47,6 +47,8 @@ def put_white_text(img, x, y, text ):
                 (x, y), cv2.FONT_HERSHEY_SIMPLEX,
                 0.7, (255, 255, 255), 1);
 
+#! consts should be passed as parameters. Alternatively, you can use a class.
+#TODO: put in class?
 baseImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
 img = cv2.imread(baseImagePath, 1)
 imgScaleFactor = 0.7
@@ -67,6 +69,7 @@ def parkingMVP():
     key = 0
     # loop until escape character is pressed
     #! You can use a for loop instead
+    #TODO: change to for loop
     while key != ESC_KEY:
 
         put_white_text(baseImage,10,30,'Choose top left corner and drag to crop')
@@ -79,12 +82,15 @@ def parkingMVP():
     firstImageCrop = baseImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
     firstImageCrop = firstImageCrop[...,::-1]
     imageCounter = 1
+
     #! Prefer for loops
+    # TODO: change to for loop
     while imageCounter < numOfImages+1 :
         # test with multiple pictures and light change
         #! consts should be passed as parameters. Alternatively, you can use a class.
+        # TODO: put in class?
         secondImagePath = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
-                          r"\test pictures\notebook_sequential_images\image_%d.jpg") %imageCounter
+                          r"\test pictures\notebook_sequential_images\image_{}.jpg".format(imageCounter))
 
         # crop image_2
         secondImage = cv2.imread(secondImagePath)
@@ -92,11 +98,10 @@ def parkingMVP():
         secondImageResized = secondImageResized[...,::-1]
         secondImageCrop = secondImageResized[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
 
-        #! Try and avoid using `;` in Python. It is better to split the lines.
         #! If you have a repeating line structure that makes sense to keep together - make it a function instead.
-        plt.figure(figsize=[15, 15]);
-        plt.subplot(121); plt.imshow(firstImageCrop); plt.title("first image crop");
-        plt.subplot(122); plt.imshow(secondImageCrop); plt.title("second image crop");
+        plt.figure(figsize=[15, 15])
+        plt.subplot(121); plt.imshow(firstImageCrop); plt.title("first image crop")
+        plt.subplot(122); plt.imshow(secondImageCrop); plt.title("second image crop")
         plt.show()
 
         # compare first_image to second_image , find contours
@@ -115,41 +120,41 @@ def parkingMVP():
         try:
             biggestContour = max(contours, key=cv2.contourArea)
         except ValueError:
-            #! You might wanna read about other formatting options. Both `str.format` and f-strings.
-            print("no contours detected in image %d" %imageCounter)
+
+            print("no contours detected in image {}".format(imageCounter))
             #! By using a for loop, you'd not have to manually increment all cases.
             #! Additionally, if you have something that must happen in both the `except`
             #! and the `else` blocks, you can put it in a `finally` block.
             imageCounter += 1
             continue
-            #! There is no need to use an `else` block here. Since you use `continue` in the
-            #! `except` block, you can just place the code after the try-except part.
-            #! Alternatively, you can place all this code in the `try` block. But it is
-            #! usually better to keep `try` blocks as small as reasonable.
-            biggestContourArea = cv2.contourArea(biggestContour)
-            image_h, image_w = secondImageCrop.shape[:2]
+        #! There is no need to use an `else` block here. Since you use `continue` in the
+        #! `except` block, you can just place the code after the try-except part.
+        #! Alternatively, you can place all this code in the `try` block. But it is
+        #! usually better to keep `try` blocks as small as reasonable.
+        biggestContourArea = cv2.contourArea(biggestContour)
+        image_h, image_w = secondImageCrop.shape[:2]
 
-            if biggestContourArea > (image_h*image_w)*0.3:
-                print("parking taken in image %d" %imageCounter)
-            else:
-                print("small thing in image %d" %imageCounter)
+        if biggestContourArea > (image_h*image_w)*0.3:
+            print("parking taken in image {}".format(imageCounter))
+        else:
+            print("small thing in image {}".format(imageCounter))
 
-            #draw boundindgBox abour biggest contour
-            x, y, w, h = cv2.boundingRect(biggestContour)
-            #! I'd recommend putting the various values in named variables so that you know what they mean.
-            #! Another thing that is helpful is explicitly using the function-argument names
-            #! when calling a function with many arguments.
-            #! like `pt1 = (x,y)`
-            cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
-            #
-            # plt.imshow(differenceWithContours)
-            # plt.show()
+        #draw boundindgBox abour biggest contour
+        x, y, w, h = cv2.boundingRect(biggestContour)
+        #! I'd recommend putting the various values in named variables so that you know what they mean.
+        #! Another thing that is helpful is explicitly using the function-argument names
+        #! when calling a function with many arguments.
+        #! like `pt1 = (x,y)`
+        cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        #
+        # plt.imshow(differenceWithContours)
+        # plt.show()
 
-            imageCounter += 1
+        imageCounter += 1
 
-            firstImageCrop = secondImageCrop
-            # if yes, print something , stop procces?
-        # if no, image_2 becomes first_image, load, crop and mark image_3 to second_image and repeat
+        firstImageCrop = secondImageCrop
+        # if yes, print something , stop procces?
+    # if no, image_2 becomes first_image, load, crop and mark image_3 to second_image and repeat
 
 
 
