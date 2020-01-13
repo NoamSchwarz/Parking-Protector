@@ -1,7 +1,8 @@
 import cv2
 
-class MarkParkinge:
-    
+class MarkParking:
+
+    #TODO: should baseImage and imgScaleFactor be classe atributes?
     baseImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
     img = cv2.imread(baseImagePath, 1)
     imgScaleFactor = 0.7
@@ -29,12 +30,13 @@ class MarkParkinge:
             self.cropRightColomn = x
             cv2.rectangle(self.baseImage, self.topLeft, self.bottomRight, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
 
+
     def put_white_text(self, img, x, y, text):
         cv2.putText(self.baseImage, '{}'.format(text),
                     (x, y), cv2.FONT_HERSHEY_SIMPLEX,
                     0.7, (255, 255, 255), 1);
 
-    def mouse_call_back(self):
+    def mark_parking(self):
         ESC_KEY = 27
 
         cv2.namedWindow("Window")
@@ -49,8 +51,6 @@ class MarkParkinge:
             cv2.imshow("Window", self.baseImage)
             key = cv2.waitKey(20) & 0xFF
 
-    def get_crop_coordinates(self):
+    def get_rectangle_coordinates(self):
         return self.cropTopRow, self.cropBottomRow, self.cropLeftColomn, self.cropRightColomn
 
-thing = MarkParkinge()
-thing.mouse_call_back()
