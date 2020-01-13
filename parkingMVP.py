@@ -9,7 +9,7 @@ cropTopRow = None
 cropBottomRow = None
 cropLeftColomn = None
 cropRightColomn = None
-cropedImage = None
+
 
 class CropRectangle:
     def __init__(self):
@@ -105,6 +105,7 @@ def parkingMVP():
         plt.show()
 
         # compare first_image to second_image , find contours
+        #TODO: put in sepeate function
         #! A lot of these comments look like the block below them can be extracted into a separate,
         #! named function. This would make the code easier to reason about and test.
         difference = cv2.subtract(firstImageCrop, secondImageCrop)
@@ -120,17 +121,14 @@ def parkingMVP():
         try:
             biggestContour = max(contours, key=cv2.contourArea)
         except ValueError:
-
             print("no contours detected in image {}".format(imageCounter))
+
             #! By using a for loop, you'd not have to manually increment all cases.
             #! Additionally, if you have something that must happen in both the `except`
             #! and the `else` blocks, you can put it in a `finally` block.
             imageCounter += 1
             continue
-        #! There is no need to use an `else` block here. Since you use `continue` in the
-        #! `except` block, you can just place the code after the try-except part.
-        #! Alternatively, you can place all this code in the `try` block. But it is
-        #! usually better to keep `try` blocks as small as reasonable.
+
         biggestContourArea = cv2.contourArea(biggestContour)
         image_h, image_w = secondImageCrop.shape[:2]
 
@@ -140,22 +138,19 @@ def parkingMVP():
             print("small thing in image {}".format(imageCounter))
 
         #draw boundindgBox abour biggest contour
-        x, y, w, h = cv2.boundingRect(biggestContour)
+        topLeftX, topLeftY, width, hight = cv2.boundingRect(biggestContour)
         #! I'd recommend putting the various values in named variables so that you know what they mean.
         #! Another thing that is helpful is explicitly using the function-argument names
         #! when calling a function with many arguments.
-        #! like `pt1 = (x,y)`
-        cv2.rectangle(differenceWithContours, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        #
-        # plt.imshow(differenceWithContours)
-        # plt.show()
+        topLeftCoror = (topLeftX,topLeftY)
+        bottomRightCornor = (topLeftX + width, topLeftY + hight)
+        cv2.rectangle(differenceWithContours, topLeftCoror , bottomRightCornor , color = (0, 0, 255), thickness=2)
 
         imageCounter += 1
 
         firstImageCrop = secondImageCrop
-        # if yes, print something , stop procces?
-    # if no, image_2 becomes first_image, load, crop and mark image_3 to second_image and repeat
-
+        #TODO: decide weather to procese after spot is taken or to stop the procces.
+        #if the former, do I need to be able to idenify when the taken spot has become empty?
 
 
 parkingMVP()
