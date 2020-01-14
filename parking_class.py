@@ -44,7 +44,6 @@ class MarkParking:
         cv2.setMouseCallback("Window", self.draw_rectangle)
         key = 0
 
-        # TODO: change to for loop?
         while key != ESC_KEY:
             self.put_white_text(self.baseImage, 10, 30, 'Choose top left corner and drag to crop')
             self.put_white_text(self.baseImage, 10, 55, 'press ESC to exit')

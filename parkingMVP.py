@@ -2,10 +2,20 @@ import cv2
 import matplotlib.pyplot as plt
 import parking_proj_git.parking_class
 
+#TODO: have in parking_class as well. make global?
+imgScaleFactor = 0.7
+
 def get_num_of_images():
     #TODO: Get the values automatically
     return 14
 
+def cropImage(imagePath, cropCoordinates):
+    cropTopRow, cropBottomRow, cropLeftColomn, cropRightColomn = cropCoordinates
+    tempImage = cv2.imread(imagePath)
+    tempImageResized = cv2.resize(tempImage, None, fx=imgScaleFactor, fy=imgScaleFactor, interpolation=cv2.INTER_LINEAR)
+    tempImageResized = tempImageResized[..., ::-1]
+    tempImageCrop = tempImageResized[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
+    return tempImageCrop
 
 def parkingMVP():
     # test with multiple pictures and light change
@@ -13,42 +23,35 @@ def parkingMVP():
     numOfImages = get_num_of_images()
 
     #for notebook_sequential_images, witch are darker then the norebook from above
+    #TODO: run autocrop test with images 12 and 13 to see if change of thresh is needed for correct output
+    #currently it gives small thing in parking instead of parking taken
     thresh = 65
     maxVal = 255
 
-
+    #mark parking spot in picture with a rectangle
     markParking = parking_proj_git.parking_class.MarkParking()
     markParking.mark_parking()
-    cropTopRow, cropBottomRow, cropLeftColomn, cropRightColomn = markParking.get_rectangle_coordinates()
+    #tuple of the coordinates of the 4 corners of the rectangle marking the parking spot
+    cropCoordinates = markParking.get_rectangle_coordinates()
 
-    # crop base image mark it firstImageCrop
-    baseImage = markParking.baseImage
-    firstImageCrop = baseImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
-    firstImageCrop = firstImageCrop[...,::-1]
-    imageCounter = 1
+    # test with multiple pictures and light change
+    #TODO: pass as parameter for parkingMVP function?
+    firstImagePath = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git"
+                      r"\test pictures\notebook_sequential_images\image_{}.jpg".format(1))
 
-    #! Prefer for loops
-    # TODO: change to for loop
-    while imageCounter < numOfImages+1 :
-        # test with multiple pictures and light change
-        #! consts should be passed as parameters. Alternatively, you can use a class.
-        # TODO: put in class?
+    firstImageCrop = cropImage(firstImagePath, cropCoordinates)
+
+    for i in range(1,numOfImages+1):
+
         secondImagePath = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
-                          r"\test pictures\notebook_sequential_images\image_{}.jpg".format(imageCounter))
-
+                          r"\test pictures\notebook_sequential_images\image_{}.jpg".format(i))
         # crop image_2
-        imgScaleFactor = markParking.imgScaleFactor
+        secondImageCrop = cropImage(secondImagePath, cropCoordinates )
 
-        secondImage = cv2.imread(secondImagePath)
-        secondImageResized = cv2.resize(secondImage,None,fx=imgScaleFactor,fy=imgScaleFactor,interpolation= cv2.INTER_LINEAR)
-        secondImageResized = secondImageResized[...,::-1]
-        secondImageCrop = secondImageResized[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
-
-        #! If you have a repeating line structure that makes sense to keep together - make it a function instead.
-        plt.figure(figsize=[15, 15])
-        plt.subplot(121); plt.imshow(firstImageCrop); plt.title("first image crop")
-        plt.subplot(122); plt.imshow(secondImageCrop); plt.title("second image crop")
-        plt.show()
+         # plt.figure(figsize=[15, 15])
+        # plt.subplot(121); plt.imshow(firstImageCrop); plt.title("first image crop")
+        # plt.subplot(122); plt.imshow(secondImageCrop); plt.title("second image crop")
+        # plt.show()
 
         # compare first_image to second_image , find contours
         #TODO: put in sepeate function
@@ -64,32 +67,27 @@ def parkingMVP():
         differenceWithContours = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
 
         #incase compared photos are exactly/mostly the same and no contours are found
+        #TODO: can this block be a seperate function?
         try:
             biggestContour = max(contours, key=cv2.contourArea)
         except ValueError:
-            print("no contours detected in image {}".format(imageCounter))
-
-            #! By using a for loop, you'd not have to manually increment all cases.
-            #! Additionally, if you have something that must happen in both the `except`
-            #! and the `else` blocks, you can put it in a `finally` block.
-            imageCounter += 1
+            print("no contours detected in image {}".format(i))
             continue
 
         biggestContourArea = cv2.contourArea(biggestContour)
         image_h, image_w = secondImageCrop.shape[:2]
 
         if biggestContourArea > (image_h*image_w)*0.3:
-            print("parking taken in image {}".format(imageCounter))
+            print("parking taken in image {}".format(i))
         else:
-            print("small thing in image {}".format(imageCounter))
+            print("small thing in image {}".format(i))
 
+        #TODO: can be seperate function
         #draw boundindgBox abour biggest contour
         topLeftX, topLeftY, width, hight = cv2.boundingRect(biggestContour)
         topLeftCoror = (topLeftX,topLeftY)
         bottomRightCornor = (topLeftX + width, topLeftY + hight)
         cv2.rectangle(differenceWithContours, topLeftCoror , bottomRightCornor , color = (0, 0, 255), thickness=2)
-
-        imageCounter += 1
 
         firstImageCrop = secondImageCrop
         #TODO: decide weather to procese after spot is taken or to stop the procces.
