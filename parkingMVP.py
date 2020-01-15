@@ -1,6 +1,6 @@
 import cv2
 import matplotlib.pyplot as plt
-import parking_proj_git.parking_class
+from parking_proj_git.parking_class import ParkingMark
 
 FIRST_IMAGE_PATH = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git"
                       r"\test pictures\notebook_sequential_images\image_1.jpg")
@@ -50,7 +50,7 @@ def compare_images(firstImage, secondImage):
 # mark parking spot in picture with a rectangle
 # crop_coordinates is a tuple of the coordinates of the 4 corners of the rectangle
 def find_parking_spot():
-    mark_parking = parking_proj_git.parking_class.MarkParking()
+    mark_parking = ParkingMark()
     mark_parking.mark_parking()
     crop_coordinates = mark_parking.get_rectangle_coordinates()
     return crop_coordinates

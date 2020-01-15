@@ -1,6 +1,6 @@
 import cv2
 
-class MarkParking:
+class ParkingMark:
 
     #TODO: should baseImage and imgScaleFactor be classe atributes?
     base_image_path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
@@ -9,26 +9,26 @@ class MarkParking:
     base_image = cv2.resize(img, None, fx=img_scale_factor, fy=img_scale_factor, interpolation=cv2.INTER_LINEAR)
 
     def __init__(self):
-        self.topLeft = None
-        self.bottomRight = None
-        self.cropTopRow = None
-        self.cropBottomRow = None
-        self.cropLeftColomn = None
-        self.cropRightColomn = None
+        self.top_left = None
+        self.bottom_right = None
+        self.crop_top_row = None
+        self.crop_bottom_row = None
+        self.crop_left_colomn = None
+        self.crop_right_colomn = None
 
     def draw_rectangle(self, action, x, y, flags, userdata):
 
         if action == cv2.EVENT_LBUTTONDOWN:
-            self.topLeft = (x, y)
-            self.cropTopRow = y
-            self.cropLeftColomn = x
+            self.top_left = (x, y)
+            self.crop_top_row = y
+            self.crop_left_colomn = x
 
-            cv2.rectangle(self.base_image, self.topLeft, self.topLeft, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+            cv2.rectangle(self.base_image, self.top_left, self.top_left, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
         elif action == cv2.EVENT_LBUTTONUP:
-            self.bottomRight = (x, y)
-            self.cropBottomRow = y
-            self.cropRightColomn = x
-            cv2.rectangle(self.base_image, self.topLeft, self.bottomRight, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+            self.bottom_right = (x, y)
+            self.crop_bottom_row = y
+            self.crop_right_colomn = x
+            cv2.rectangle(self.base_image, self.top_left, self.bottom_right, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
 
 
     def put_white_text(self, img, x, y, text):
@@ -52,5 +52,5 @@ class MarkParking:
         cv2.destroyWindow("Window")
 
     def get_rectangle_coordinates(self):
-        return self.cropTopRow, self.cropBottomRow, self.cropLeftColomn, self.cropRightColomn
+        return self.crop_top_row, self.crop_bottom_row, self.crop_left_colomn, self.crop_right_colomn
 
