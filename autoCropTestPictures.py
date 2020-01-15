@@ -2,8 +2,8 @@ import cv2
 import matplotlib.pyplot as plt
 import os
 
-firstImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_2.jpg"
-secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_3.jpg"
+firstImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_11.jpg"
+secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_12.jpg"
 
 img1 = cv2.imread(firstImagePath, 1)
 firstImage = cv2.resize(img1, None, fx=0.8, fy=0.8, interpolation=cv2.INTER_LINEAR)
@@ -14,7 +14,7 @@ secondImage = secondImage[..., ::-1]
 
 def parkingMVP():
 
-    thresh = 65
+    thresh = 40
     maxVal = 255
 
     cv2.namedWindow("Window")
@@ -36,15 +36,14 @@ def parkingMVP():
 
     firstImageCrop = firstImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
     firstImageCrop = firstImageCrop[..., ::-1]
-    plt.imshow(firstImageCrop)
-    plt.show()
     
     secondImageCrop = secondImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
-    plt.imshow(secondImageCrop)
-    plt.show()
 
     # compare first_image to second_image , find contours
     difference = cv2.subtract(firstImageCrop, secondImageCrop)
+    plt.imshow(difference)
+    plt.show()
+
     differencGreyscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
     retreval, differenceThreshold = cv2.threshold(differencGreyscale, thresh, maxVal, cv2.THRESH_BINARY)
 
@@ -53,6 +52,8 @@ def parkingMVP():
     differenceThresholdBGR = cv2.cvtColor(differenceThresholdCopy, cv2.COLOR_GRAY2BGR)
     differenceWithContours = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
 
+    plt.imshow(differenceWithContours)
+    plt.show()
     # find biggest contour and boundBox it
     try:
         biggestContour = max(contours, key=cv2.contourArea)

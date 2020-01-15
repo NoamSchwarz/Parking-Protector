@@ -3,10 +3,10 @@ import cv2
 class MarkParking:
 
     #TODO: should baseImage and imgScaleFactor be classe atributes?
-    baseImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
-    img = cv2.imread(baseImagePath, 1)
-    imgScaleFactor = 0.7
-    baseImage = cv2.resize(img, None, fx=imgScaleFactor, fy=imgScaleFactor, interpolation=cv2.INTER_LINEAR)
+    base_image_path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
+    img = cv2.imread(base_image_path, 1)
+    img_scale_factor = 0.7
+    base_image = cv2.resize(img, None, fx=img_scale_factor, fy=img_scale_factor, interpolation=cv2.INTER_LINEAR)
 
     def __init__(self):
         self.topLeft = None
@@ -23,16 +23,16 @@ class MarkParking:
             self.cropTopRow = y
             self.cropLeftColomn = x
 
-            cv2.rectangle(self.baseImage, self.topLeft, self.topLeft, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+            cv2.rectangle(self.base_image, self.topLeft, self.topLeft, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
         elif action == cv2.EVENT_LBUTTONUP:
             self.bottomRight = (x, y)
             self.cropBottomRow = y
             self.cropRightColomn = x
-            cv2.rectangle(self.baseImage, self.topLeft, self.bottomRight, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+            cv2.rectangle(self.base_image, self.topLeft, self.bottomRight, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
 
 
     def put_white_text(self, img, x, y, text):
-        cv2.putText(self.baseImage, '{}'.format(text),
+        cv2.putText(self.base_image, '{}'.format(text),
                     (x, y), cv2.FONT_HERSHEY_SIMPLEX,
                     0.7, (255, 255, 255), 1);
 
@@ -45,10 +45,11 @@ class MarkParking:
         key = 0
 
         while key != ESC_KEY:
-            self.put_white_text(self.baseImage, 10, 30, 'Choose top left corner and drag to crop')
-            self.put_white_text(self.baseImage, 10, 55, 'press ESC to exit')
-            cv2.imshow("Window", self.baseImage)
+            self.put_white_text(self.base_image, 10, 30, 'Choose top left corner and drag to crop')
+            self.put_white_text(self.base_image, 10, 55, 'press ESC to exit')
+            cv2.imshow("Window", self.base_image)
             key = cv2.waitKey(20) & 0xFF
+        cv2.destroyWindow("Window")
 
     def get_rectangle_coordinates(self):
         return self.cropTopRow, self.cropBottomRow, self.cropLeftColomn, self.cropRightColomn
