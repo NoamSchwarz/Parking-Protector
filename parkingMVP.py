@@ -2,33 +2,37 @@ import cv2
 import matplotlib.pyplot as plt
 from parking_proj_git.parking_class import ParkingMark
 
-FIRST_IMAGE_PATH = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git"
-                      r"\test pictures\notebook_sequential_images\image_1.jpg")
+#TODO change parking_prij_git ro just parking_proj (how to do this without messing everything up? )
+#TODO change parking_class to ParkingMark
+#TODO find a funner name for parkingMVP
 
-SECOND_IMAGE_PATH_TEMPLATE = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
+IMAGE_PATH_TEMPLATE = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
                           r"\test pictures\notebook_sequential_images\image_{}.jpg")
-
-#TODO change all camle case variables and functions name to underscore
-#TODO: finish
+FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(1)
 
 #TODO: run autocrop test with images 12 and 13 to see if change of thresh is needed for correct output
-#currently it gives small thing in parking instead of parking taken
+#it does. needs a thresh of ~35 for correct result.
 
-#TODO: have in parking_class as well. make global?
-imgScaleFactor = 0.7
+#TODO: have in parking_class as well. make it a constant and a parameter of the read-resize function
+IMG_RESIZE_FACTOR = 0.7
 
 def get_num_of_images():
     #TODO: Get the values automatically
     return 14
 
-#TODO: consider makeing cropCoordinates a named tuple
-def crop_image(imagePath, cropCoordinates):
-    cropTopRow, cropBottomRow, cropLeftColomn, cropRightColomn = cropCoordinates
-    tempImage = cv2.imread(imagePath)
-    tempImageResized = cv2.resize(tempImage, None, fx=imgScaleFactor, fy=imgScaleFactor, interpolation=cv2.INTER_LINEAR)
-    tempImageResized = tempImageResized[..., ::-1]
-    tempImageCrop = tempImageResized[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
+#TODO make a crop-coordinated class, with the coordinates as atributes
+#TODO use ParkingMark object for the coordinates instead if the tuple. add parking obkect as parameter for crop_image function
+
+def crop_image(img, crop_coordinates):
+    cropTopRow, cropBottomRow, cropLeftColomn, cropRightColomn = crop_coordinates
+    tempImageCrop = img[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
     return tempImageCrop
+
+def read_resize_image(img_path, img_resize_factor):
+    temp_image = cv2.imread(img_path)
+    temp_image_resize = cv2.resize(temp_image, None, fx=img_resize_factor, fy=img_resize_factor, interpolation=cv2.INTER_LINEAR)
+    temp_image_resize = temp_image_resize[..., ::-1]
+    return temp_image_resize
 
 def compare_images(firstImage, secondImage):
     # for notebook_sequential_images, witch are darker then the norebook from above
@@ -36,8 +40,8 @@ def compare_images(firstImage, secondImage):
     maxVal = 255
 
     difference = cv2.subtract(firstImage, secondImage)
-    differenc_greyscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-    retreval, difference_threshold = cv2.threshold(differenc_greyscale, thresh, maxVal, cv2.THRESH_BINARY)
+    difference_grayscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
+    retrieval, difference_threshold = cv2.threshold(difference_grayscale, thresh, maxVal, cv2.THRESH_BINARY)
 
     contours, hierarchy = cv2.findContours(difference_threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     difference_threshold_copy = difference_threshold.copy()
@@ -50,9 +54,14 @@ def compare_images(firstImage, secondImage):
 # mark parking spot in picture with a rectangle
 # crop_coordinates is a tuple of the coordinates of the 4 corners of the rectangle
 def find_parking_spot():
-    mark_parking = ParkingMark()
-    mark_parking.mark_parking()
-    crop_coordinates = mark_parking.get_rectangle_coordinates()
+    #TODO change to read-resize function
+    img = cv2.imread(FIRST_IMAGE_PATH, 1)
+    img_scale_factor = 0.7
+    base_image = cv2.resize(img, None, fx=img_scale_factor, fy=img_scale_factor, interpolation=cv2.INTER_LINEAR)
+
+    parking_mark = ParkingMark(base_image)
+    parking_mark.mark_parking()
+    crop_coordinates = parking_mark.get_rectangle_coordinates()
     return crop_coordinates
 
 
@@ -61,14 +70,13 @@ def parking_MVP():
     num_of_images = get_num_of_images()
     crop_coordinates = find_parking_spot()
 
-    #TODO: pass as parameter for parkingMVP function + as a constant
+    first_image = read_resize_image(FIRST_IMAGE_PATH,IMG_RESIZE_FACTOR)
+    first_image_crop = crop_image(first_image, crop_coordinates)
 
-    first_image_crop = crop_image(FIRST_IMAGE_PATH, crop_coordinates)
-
-    #TODO turn secondImage_path to constant and then use templat.format()
     for image_index in range(2, num_of_images+1):
-        second_image_path = SECOND_IMAGE_PATH_TEMPLATE.format(image_index)
-        second_image_crop = crop_image(second_image_path, crop_coordinates)
+
+        second_image = read_resize_image(IMAGE_PATH_TEMPLATE.format(image_index),IMG_RESIZE_FACTOR)
+        second_image_crop = crop_image(second_image, crop_coordinates)
 
         # plt.figure(figsize=[15, 15])
         # plt.subplot(121); plt.imshow(first_image_crop); plt.title("image {} crop".format(image_index-1))
