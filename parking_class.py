@@ -42,6 +42,4 @@ class ParkingMark:
             key = cv2.waitKey(20) & 0xFF
         cv2.destroyWindow("Window")
 
-    def get_rectangle_coordinates(self):
-        return self.crop_top_row, self.crop_bottom_row, self.crop_left_colomn, self.crop_right_colomn
 
