@@ -38,9 +38,7 @@ def parkingMVP():
     firstImageCrop = firstImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
     secondImageCrop = secondImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
 
-    path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\test_compare_images_function"
-    cv2.imwrite(os.path.join(path, 'notebook_sequential_images_image_2_crop.png'), firstImageCrop)
-    cv2.imwrite(os.path.join(path, 'notebook_sequential_images_image_3_crop.png'), secondImageCrop)
+
 
     # compare first_image to second_image , find contours
     difference = cv2.subtract(firstImageCrop, secondImageCrop)
@@ -55,9 +53,7 @@ def parkingMVP():
     differenceThresholdBGR = cv2.cvtColor(differenceThresholdCopy, cv2.COLOR_GRAY2BGR)
     differenceWithContours = cv2.drawContours(differenceThresholdBGR, contours, -1, (0, 255, 0), 1);
 
-    plt.imshow(differenceWithContours)
-    plt.show()
-    cv2.imwrite(os.path.join(path, 'result_for_images_2_and_3.png'), differenceWithContours)
+
     # find biggest contour and boundBox it
     try:
         biggestContour = max(contours, key=cv2.contourArea)
