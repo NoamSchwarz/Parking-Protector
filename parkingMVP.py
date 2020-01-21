@@ -1,53 +1,48 @@
 import cv2
 import matplotlib.pyplot as plt
 from parking_proj_git.parking_class import ParkingMark
+import os
+import os.path
 
 #TODO change parking_prij_git ro just parking_proj (how to do this without messing everything up? )
 #TODO change parking_class to ParkingMark
 #TODO find a funner name for parkingMVP - parking protector?
+#TODO: run autocrop test with images 12 and 13 to see if change of thresh is needed for correct output
+#it does. needs a thresh of ~35 for correct result.
+
+IMG_FILE_PATH = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
+                          r"\test pictures\notebook_sequential_images")
 
 IMAGE_PATH_TEMPLATE = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
                           r"\test pictures\notebook_sequential_images\image_{}.jpg")
 FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(1)
 
-#TODO: run autocrop test with images 12 and 13 to see if change of thresh is needed for correct output
-#it does. needs a thresh of ~35 for correct result.
-
-#TODO: have in parking_class as well. (as parmeter?)
 IMG_RESIZE_FACTOR = 0.7
 
-def get_num_of_images():
-    #TODO: Get the values automatically
-    return 14
+#TODO: understand how this works because i copied it from stackoverflow
+def get_num_of_images(img_file_path):
+    file_count = len([name for name in os.listdir(img_file_path) if os.path.isfile(os.path.join(img_file_path, name))])
+    return file_count
 
-#TODO use ParkingMark object for the coordinates instead if the tuple. add parking obkect as parameter for crop_image function
-# currently, the mark_parking object is made in the find_parking_spot function, so it isn't found in parking_mvp
-
-
-def crop_image(img, crop_coordinates):
-    cropTopRow, cropBottomRow, cropLeftColomn, cropRightColomn = crop_coordinates
-    tempImageCrop = img[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
-    return tempImageCrop
-
-# def crop_image(img, mark_parking_obj):
-#     cropTopRow = mark_parking_obj.crop_top_row
-#     cropBottomRow = mark_parking_obj.crop_bottom_row
-#     cropLeftColomn = mark_parking_obj.crop_left_colomn
-#     cropRightColomn = mark_parking_obj.crop_right_colomn
-#     tempImageCrop = img[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
-#     return tempImageCrop
+def crop_image(img, parking_mark_object):
+    crop_top_row = parking_mark_object.crop_top_row
+    crop_bottom_row = parking_mark_object.crop_bottom_row
+    crop_left_colomn = parking_mark_object.crop_left_colomn
+    crop_right_colomn = parking_mark_object.crop_right_colomn
+    temp_image_crop = img[crop_top_row:crop_bottom_row, crop_left_colomn:crop_right_colomn]
+    return temp_image_crop
 
 def read_resize_image(img_path, img_resize_factor):
     temp_image = cv2.imread(img_path)
     temp_image_resize = cv2.resize(temp_image, None, fx=img_resize_factor, fy=img_resize_factor, interpolation=cv2.INTER_LINEAR)
     return temp_image_resize
 
-def compare_images(firstImage, secondImage):
-    # for notebook_sequential_images, witch are darker then the norebook from above
+def compare_images(first_image, second_image):
+    # for notebook_sequential_images, witch are darker then the notebook from above
     thresh = 65
     maxVal = 255
 
-    difference = cv2.subtract(firstImage, secondImage)
+    difference = cv2.subtract(first_image, second_image)
     difference_grayscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
     retrieval, difference_threshold = cv2.threshold(difference_grayscale, thresh, maxVal, cv2.THRESH_BINARY)
 
@@ -58,19 +53,14 @@ def compare_images(firstImage, secondImage):
 
     return difference_with_contours, contours
 
-
 # mark parking spot in picture with a rectangle
-# crop_coordinates is a tuple of the coordinates of the 4 corners of the rectangle
 def find_parking_spot():
-
     base_image = read_resize_image(FIRST_IMAGE_PATH, IMG_RESIZE_FACTOR)
     parking_mark = ParkingMark(base_image)
     parking_mark.mark_parking()
-    crop_coordinates = parking_mark.get_rectangle_coordinates()
-    return crop_coordinates
+    return parking_mark
 
 def find_biggest_contour_area(contour_list, image_index):
-    # TODO: can this block be a seperate function?
     try:
         biggest_contour = max(contour_list, key=cv2.contourArea)
     except ValueError:
@@ -97,16 +87,16 @@ def draw_contour_bounding_box(biggest_contour, difference_with_contours_img):
 
 def parking_MVP():
 
-    num_of_images = get_num_of_images()
-    crop_coordinates = find_parking_spot()
+    num_of_images = get_num_of_images(IMG_FILE_PATH)
+    parking_mark = find_parking_spot()
 
     first_image = read_resize_image(FIRST_IMAGE_PATH,IMG_RESIZE_FACTOR)
-    first_image_crop = crop_image(first_image, crop_coordinates)
+    first_image_crop = crop_image(first_image, parking_mark)
 
     for image_index in range(2, num_of_images+1):
 
         second_image = read_resize_image(IMAGE_PATH_TEMPLATE.format(image_index),IMG_RESIZE_FACTOR)
-        second_image_crop = crop_image(second_image, crop_coordinates)
+        second_image_crop = crop_image(second_image, parking_mark)
 
         # plt.figure(figsize=[15, 15])
         # plt.subplot(121); plt.imshow(first_image_crop); plt.title("image {} crop".format(image_index-1))
@@ -130,11 +120,7 @@ def parking_MVP():
         cv2.destroyWindow("image {}".format(image_index))
 
        # first_image_crop = second_image_crop
-        #TODO: decide weather to procese after spot is taken or to stop the procces.
-        #if the former, do I need to be able to idenify when the taken spot has become empty?
 
-
-parking_MVP()
 
 #! Other notes:
 #! - Automatic formatting
@@ -142,3 +128,6 @@ parking_MVP()
 #! - __main__
 #! - argparse
 #! - Generators
+
+if __name__ == '__main__':
+    parking_MVP()

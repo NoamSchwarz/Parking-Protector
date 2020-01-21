@@ -2,19 +2,19 @@ import cv2
 import matplotlib.pyplot as plt
 import os
 
-firstImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_11.jpg"
-secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_12.jpg"
+firstImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_2.jpg"
+secondImagePath = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_3.jpg"
 
 img1 = cv2.imread(firstImagePath, 1)
 firstImage = cv2.resize(img1, None, fx=0.8, fy=0.8, interpolation=cv2.INTER_LINEAR)
 
 img2 = cv2.imread(secondImagePath, 1)
 secondImage= cv2.resize(img2, None, fx=0.8, fy=0.8, interpolation=cv2.INTER_LINEAR)
-secondImage = secondImage[..., ::-1]
+
 
 def parkingMVP():
 
-    thresh = 40
+    thresh = 65
     maxVal = 255
 
     cv2.namedWindow("Window")
@@ -32,12 +32,15 @@ def parkingMVP():
         cv2.imshow("Window", firstImage)
         k = cv2.waitKey(20) & 0xFF
 
+    print(cropTopRow, cropBottomRow, cropLeftColomn, cropRightColomn)
     # crop base image mark it firstImageCrop
 
     firstImageCrop = firstImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
-    firstImageCrop = firstImageCrop[..., ::-1]
-    
     secondImageCrop = secondImage[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]
+
+    path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\test_compare_images_function"
+    cv2.imwrite(os.path.join(path, 'notebook_sequential_images_image_2_crop.png'), firstImageCrop)
+    cv2.imwrite(os.path.join(path, 'notebook_sequential_images_image_3_crop.png'), secondImageCrop)
 
     # compare first_image to second_image , find contours
     difference = cv2.subtract(firstImageCrop, secondImageCrop)
@@ -54,6 +57,7 @@ def parkingMVP():
 
     plt.imshow(differenceWithContours)
     plt.show()
+    cv2.imwrite(os.path.join(path, 'result_for_images_2_and_3.png'), differenceWithContours)
     # find biggest contour and boundBox it
     try:
         biggestContour = max(contours, key=cv2.contourArea)
@@ -96,6 +100,8 @@ def cropRectangle(action, x, y, flags, userdata):
         bottomRight = (x, y)
         cropBottomRow, cropRightColomn = y, x
         cv2.rectangle(firstImage, topLeft, bottomRight, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+
+
         #cv2.imshow("window", firstImage)
 
         # cropedImage = dummy[cropTopRow:cropBottomRow, cropLeftColomn:cropRightColomn]

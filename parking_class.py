@@ -2,13 +2,6 @@ import cv2
 
 class ParkingMark:
 
-    #TODO: should baseImage and imgScaleFactor be classe atributes? yes
-    #
-    # base_image_path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images\image_1.jpg"
-    # img = cv2.imread(base_image_path, 1)
-    # img_scale_factor = 0.7
-    # base_image = cv2.resize(img, None, fx=img_scale_factor, fy=img_scale_factor, interpolation=cv2.INTER_LINEAR)
-
     def __init__(self, base_image):
         self.top_left = None
         self.bottom_right = None
