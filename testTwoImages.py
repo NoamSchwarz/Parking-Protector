@@ -10,19 +10,14 @@ import os.path
 #TODO: run autocrop test with images 12 and 13 to see if change of thresh is needed for correct output
 #it does. needs a thresh of ~35 for correct result.
 
-IMG_FILE_PATH = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
-                          r"\test pictures\notebook_sequential_images")
 
 IMAGE_PATH_TEMPLATE = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
                           r"\test pictures\notebook_sequential_images\image_{}.jpg")
-FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(1)
+
+FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(2)
+SECOND_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(3)
 
 IMG_RESIZE_FACTOR = 0.7
-
-#TODO: understand how this works because i copied it from stackoverflow
-def get_num_of_images(img_file_path):
-    file_count = len([name for name in os.listdir(img_file_path) if os.path.isfile(os.path.join(img_file_path, name))])
-    return file_count
 
 def crop_image(img, parking_mark_object):
     crop_top_row = parking_mark_object.crop_top_row
@@ -45,7 +40,7 @@ def compare_images(first_image, second_image):
     difference = cv2.subtract(first_image, second_image)
     difference_grayscale = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
     retrieval, difference_threshold = cv2.threshold(difference_grayscale, thresh, maxVal, cv2.THRESH_BINARY)
-    #contours is an array
+
     contours, hierarchy = cv2.findContours(difference_threshold, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     difference_threshold_copy = difference_threshold.copy()
     difference_threshold_bgr = cv2.cvtColor(difference_threshold_copy, cv2.COLOR_GRAY2BGR)
@@ -87,39 +82,39 @@ def draw_contour_bounding_box(biggest_contour, difference_with_contours_img):
 
 def parking_MVP():
 
-    num_of_images = get_num_of_images(IMG_FILE_PATH)
     parking_mark = find_parking_spot()
 
     first_image = read_resize_image(FIRST_IMAGE_PATH,IMG_RESIZE_FACTOR)
     first_image_crop = crop_image(first_image, parking_mark)
 
-    for image_index in range(2, num_of_images+1):
+    second_image = read_resize_image(SECOND_IMAGE_PATH,IMG_RESIZE_FACTOR)
+    second_image_crop = crop_image(second_image, parking_mark)
 
-        second_image = read_resize_image(IMAGE_PATH_TEMPLATE.format(image_index),IMG_RESIZE_FACTOR)
-        second_image_crop = crop_image(second_image, parking_mark)
+    path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\test_compare_images_function"
+    cv2.imwrite(os.path.join(path, 'notebook_sequential_images_image_2_crop.png'), first_image_crop)
+    cv2.imwrite(os.path.join(path, 'notebook_sequential_images_image_3_crop.png'), second_image_crop)
 
-        # plt.figure(figsize=[15, 15])
-        # plt.subplot(121); plt.imshow(first_image_crop); plt.title("image {} crop".format(image_index-1))
-        # plt.subplot(122); plt.imshow(second_image_crop); plt.title("image {} crop".format(image_index))
-        # plt.show()
+    # plt.figure(figsize=[15, 15])
+    # plt.subplot(121); plt.imshow(first_image_crop); plt.title("image {} crop".format(image_index-1))
+    # plt.subplot(122); plt.imshow(second_image_crop); plt.title("image {} crop".format(image_index))
+    # plt.show()
 
-        # compare firstImageCrop to secondImageCrop, find contours and mark them on image
-        difference_with_contours, contours = compare_images(first_image_crop, second_image_crop)
+    # compare firstImageCrop to secondImageCrop, find contours and mark them on image
+    difference_with_contours, contours = compare_images(first_image_crop, second_image_crop)
 
-        biggest_contour = find_biggest_contour_area(contours, image_index)
+    cv2.imwrite(os.path.join(path, 'result_for_images_2_and_3.png'), difference_with_contours)
 
-        if biggest_contour is False:
-            continue
+    biggest_contour = find_biggest_contour_area(contours, 2)
 
-        is_parking_taken(biggest_contour, second_image_crop, image_index)
+    is_parking_taken(biggest_contour, second_image_crop, 2)
 
-        draw_contour_bounding_box(biggest_contour, difference_with_contours)
+    draw_contour_bounding_box(biggest_contour, difference_with_contours)
 
-        cv2.imshow("image {}".format(image_index),difference_with_contours)
-        cv2.waitKey(1500)
-        cv2.destroyWindow("image {}".format(image_index))
+    cv2.imshow("image {}".format(2),difference_with_contours)
+    cv2.waitKey(1500)
+    cv2.destroyWindow("image {}".format(2))
 
-       # first_image_crop = second_image_crop
+   # first_image_crop = second_image_crop
 
 
 #! Other notes:
