@@ -3,8 +3,8 @@ import cv2
 class ParkingMark:
 
     def __init__(self, base_image):
-        self.top_left = None
-        self.bottom_right = None
+        self.top_left_corner = None
+        self.bottom_right_cornor = None
         self.crop_top_row = None
         self.crop_bottom_row = None
         self.crop_left_colomn = None
@@ -13,16 +13,16 @@ class ParkingMark:
 
     def draw_rectangle(self, action, x, y, flags, userdata):
         if action == cv2.EVENT_LBUTTONDOWN:
-            self.top_left = (x, y)
+            self.top_left_corner = (x, y)
             self.crop_top_row = y
             self.crop_left_colomn = x
 
-            cv2.rectangle(self.base_image, self.top_left, self.top_left, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+            cv2.rectangle(self.base_image, self.top_left_corner, self.top_left_corner, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
         elif action == cv2.EVENT_LBUTTONUP:
-            self.bottom_right = (x, y)
+            self.bottom_right_cornor = (x, y)
             self.crop_bottom_row = y
             self.crop_right_colomn = x
-            cv2.rectangle(self.base_image, self.top_left, self.bottom_right, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
+            cv2.rectangle(self.base_image, self.top_left_corner, self.bottom_right_cornor, (100, 0, 0), thickness=5, lineType=cv2.LINE_8)
 
     def put_white_text(self, img, x, y, text):
         cv2.putText(img, '{}'.format(text), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 1)
