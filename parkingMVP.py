@@ -7,14 +7,11 @@ import os.path
 #TODO change parking_prij_git ro just parking_proj (how to do this without messing everything up? )
 #TODO change parking_class to ParkingMark
 #TODO find a funner name for parkingMVP - parking protector?
-#TODO: run autocrop test with images 12 and 13 to see if change of thresh is needed for correct output
-#it does. needs a thresh of ~35 for correct result.
 
-IMG_FILE_PATH = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
-                          r"\test pictures\notebook_sequential_images")
+IMG_FILE_PATH = os.path.abspath("notebook_sequential_images_V2")
 
-IMAGE_PATH_TEMPLATE = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
-                          r"\test pictures\notebook_sequential_images\image_{}.jpg")
+IMAGE_PATH_TEMPLATE = IMG_FILE_PATH + "\image_{}.jpg"
+
 FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(1)
 
 IMG_RESIZE_FACTOR = 0.7
@@ -43,7 +40,7 @@ def read_image(img_path, img_resize_factor):
 
 def compare_images(first_image, second_image, image_index):
     # for notebook_sequential_images, witch are darker then the notebook from above
-    thresh = 65
+    thresh = 50
     maxVal = 255
 
     difference = cv2.subtract(first_image, second_image)
@@ -54,6 +51,7 @@ def compare_images(first_image, second_image, image_index):
     difference_threshold_copy = difference_threshold.copy()
     difference_threshold_bgr = cv2.cvtColor(difference_threshold_copy, cv2.COLOR_GRAY2BGR)
     difference_with_contours = cv2.drawContours(difference_threshold_bgr, contours, -1, (0, 255, 0), 1);
+
     biggest_contour = find_biggest_contour_area(contours, image_index)
     draw_contour_bounding_box(biggest_contour, difference_with_contours)
 
@@ -85,6 +83,7 @@ def is_parking_taken(biggest_contour, parking_area_img,image_index):
     #TODO check again: what exactly is the unit that contourArea returns
     if biggest_contour is False:
         return
+    #area of contours in units of non-zero pixels
     biggest_contour_area = cv2.contourArea(biggest_contour)
     image_h, image_w = parking_area_img.shape[:2]
 

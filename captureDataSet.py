@@ -16,11 +16,11 @@ import os
 
 # re-running function using system vlock
 starttime=time.time()
-path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images"
+path = r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git\test pictures\notebook_sequential_images_V3"
 imageCounter = 1
 
 while True:
-    cam = VideoCapture(1,cv2.CAP_DSHOW)   # 0 -> index of camera
+    cam = VideoCapture(0,cv2.CAP_DSHOW)
     s, img = cam.read()
     if s:    # frame captured without any errors
        # namedWindow("cam-test")

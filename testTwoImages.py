@@ -12,10 +12,10 @@ import os.path
 
 
 IMAGE_PATH_TEMPLATE = (r"C:\Users\noamn\Documents\shecodes\parking_project\parking_proj_git" 
-                          r"\test pictures\notebook_sequential_images\image_{}.jpg")
+                          r"\test pictures\notebook_sequential_images_V2\image_{}.jpg")
 
-FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(2)
-SECOND_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(3)
+FIRST_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(1)
+SECOND_IMAGE_PATH = IMAGE_PATH_TEMPLATE.format(2)
 
 IMG_RESIZE_FACTOR = 0.7
 
@@ -34,7 +34,7 @@ def read_resize_image(img_path, img_resize_factor):
 
 def compare_images(first_image, second_image):
     # for notebook_sequential_images, witch are darker then the notebook from above
-    thresh = 65
+    thresh = 120
     maxVal = 255
 
     difference = cv2.subtract(first_image, second_image)
@@ -102,7 +102,7 @@ def parking_MVP():
     # compare firstImageCrop to secondImageCrop, find contours and mark them on image
     difference_with_contours, contours = compare_images(first_image_crop, second_image_crop)
 
-    cv2.imwrite(os.path.join(path, 'result_for_images_2_and_3.png'), difference_with_contours)
+  #  cv2.imwrite(os.path.join(path, 'result_for_images_2_and_3.png'), difference_with_contours)
 
     biggest_contour = find_biggest_contour_area(contours, 2)
 
