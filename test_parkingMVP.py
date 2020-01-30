@@ -27,9 +27,10 @@ class TestCompareImages(unittest.TestCase):
         self.second_image= cv2.imread(second_image_path)
         self.correct_result = cv2.imread(correct_result_path)
 
+    #TODO compare_images now returns only biggest_contour, so this test doesn't work anymore
     def test_compare_images(self):
-        parkingMVP.compare_images(self.first_image,self.second_image)
-        result,contours = parkingMVP.compare_images(self.first_image, self.second_image)
+        parkingMVP.compare_images(self.first_image,self.second_image,2)
+        result,contours = parkingMVP.compare_images(self.first_image, self.second_image,2)
         output = "not correct"
         if result.all() == self.correct_result.all():
             output = "correct"

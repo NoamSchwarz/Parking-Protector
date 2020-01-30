@@ -5,3 +5,5 @@ difference_with_threshold.png
 tests.zip
 flow.xml
 notebook_sequential_images_V2
+Image_class.py
+test_parkingMVP.py
