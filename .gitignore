@@ -2,8 +2,7 @@ test pictures
 difference_ocuSpot1_and_unocuSpot1.jpeg
 difference_with_grayScale.png
 difference_with_threshold.png
-tests.zip
 flow.xml
-notebook_sequential_images_V2
+input_images
 Image_class.py
 test_parkingMVP.py
